@@ -4,18 +4,19 @@ services:
   - type: web
     name: formatflex-api
     env: node
-    plan: free # Start with free plan
+    plan: free
     buildCommand: "cd backend && npm install"
     startCommand: "cd backend && npm start"
     envVars:
       - key: NODE_ENV
         value: production
     
-  # Frontend Static Site
-  - type: static
+  # Frontend Static Site  
+  - type: web
     name: formatflex-web
+    env: static
     buildCommand: "cd frontend && npm install && npm run build"
     staticPublishPath: "./frontend/build"
     envVars:
       - key: REACT_APP_API_URL
-        value: https://formatflex-api.onrender.com # This will be the name of your deployed API service
+        value: https://formatflex-api.onrender.com

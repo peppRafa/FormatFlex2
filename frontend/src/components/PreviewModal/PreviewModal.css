@@ -1,0 +1,140 @@
+.preview-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.preview-modal {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  width: 90vw;
+  height: 90vh;
+  max-width: 900px;
+  max-height: 800px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e1e5e9;
+  background: #f8f9fa;
+}
+
+.preview-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: #e9ecef;
+  color: #333;
+}
+
+.preview-content {
+  flex: 1;
+  padding: 0;
+  display: flex;
+  position: relative;
+}
+
+.pdf-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: white;
+}
+
+.preview-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-top: 1px solid #e1e5e9;
+  background: #f8f9fa;
+  gap: 12px;
+}
+
+.preview-actions .btn {
+  flex: 0 0 auto;
+  min-width: 120px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .preview-modal {
+    width: 95vw;
+    height: 95vh;
+    margin: 10px;
+  }
+  
+  .preview-header {
+    padding: 16px 20px;
+  }
+  
+  .preview-header h3 {
+    font-size: 16px;
+  }
+  
+  .preview-actions {
+    padding: 12px 20px;
+    flex-direction: column;
+  }
+  
+  .preview-actions .btn {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+/* Loading State */
+.preview-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  flex-direction: column;
+  gap: 16px;
+  color: #666;
+}
+
+.preview-loading .spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e1e5e9;
+  border-top: 3px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

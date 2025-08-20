@@ -1,7 +1,7 @@
 {
   "name": "formatflex-backend",
-  "version": "1.0.0",
-  "description": "FormatFlex Backend API for manuscript formatting",
+  "version": "1.2.0",
+  "description": "FormatFlex Backend API for manuscript formatting with advanced customization",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

@@ -65,18 +65,164 @@ function generatePDFWithHtmlPdf(html) {
   });
 }
 
-// Main PDF generation function with fallback
-async function generatePDF(content, title) {
+// Generate dynamic CSS based on configuration
+function generateDynamicCSS(config) {
+  const fontImports = `
+    @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&display=swap');
+  `;
+
+  // Theme colors
+  const themes = {
+    light: { background: '#ffffff', text: '#2c2c2c', headings: '#1a1a1a' },
+    dark: { background: '#1a1a1a', text: '#e0e0e0', headings: '#ffffff' },
+    sepia: { background: '#f4f3e8', text: '#5c4b37', headings: '#3d2f1f' }
+  };
+
+  const theme = themes[config.theme] || themes.light;
+  
+  // Font size calculations
+  const baseFontSize = config.fontSize || 12;
+  const titleFontSize = Math.round(baseFontSize * 2);
+  const chapterFontSize = Math.round(baseFontSize * 1.5);
+  const sectionFontSize = Math.round(baseFontSize * 1.2);
+  
+  // Text indent based on alignment
+  const textIndent = config.textAlign === 'justify' ? '1.5rem' : '0';
+
+  // Header/Footer CSS
+  const headerCSS = config.headerEnabled ? `
+    @page {
+      @top-center {
+        content: "${config.headerText || ''}";
+        font-size: ${baseFontSize - 2}pt;
+        color: ${theme.text};
+      }
+    }
+  ` : '';
+
+  const footerCSS = config.footerEnabled ? `
+    @page {
+      @bottom-center {
+        content: "${config.footerText || ''} " counter(page);
+        font-size: ${baseFontSize - 2}pt;
+        color: ${theme.text};
+      }
+    }
+  ` : '';
+
+  return {
+    fontImports,
+    fontFamily: `'${config.fontFamily}', serif`,
+    fontSize: baseFontSize,
+    lineSpacing: config.lineSpacing || 1.6,
+    textAlign: config.textAlign || 'justify',
+    textIndent,
+    backgroundColor: theme.background,
+    textColor: theme.text,
+    headingColor: theme.headings,
+    titleFontSize,
+    chapterFontSize,
+    sectionFontSize,
+    authorFontSize: Math.round(baseFontSize * 1.1),
+    printFontSize: baseFontSize - 1,
+    printChapterFontSize: chapterFontSize - 2,
+    printSectionFontSize: sectionFontSize - 1,
+    headerCSS,
+    footerCSS,
+    headerHTML: config.headerEnabled ? `<div class="page-header">${config.headerText || ''}</div>` : '',
+    footerHTML: config.footerEnabled ? `<div class="page-footer">${config.footerText || ''}</div>` : ''
+  };
+}
+
+// Get page size configuration
+function getPageConfig(config) {
+  const pageSizes = {
+    'A4': { format: 'A4', margin: { top: '1in', right: '0.75in', bottom: '1in', left: '0.75in' } },
+    'Letter': { format: 'Letter', margin: { top: '1in', right: '1in', bottom: '1in', left: '1in' } },
+    'A5': { format: 'A5', margin: { top: '0.75in', right: '0.6in', bottom: '0.75in', left: '0.6in' } },
+    '6x9': { format: [432, 648], margin: { top: '0.75in', right: '0.6in', bottom: '0.75in', left: '0.6in' } },
+    '5x8': { format: [360, 576], margin: { top: '0.6in', right: '0.5in', bottom: '0.6in', left: '0.5in' } }
+  };
+
+  const marginPresets = {
+    narrow: { top: '0.5in', right: '0.5in', bottom: '0.5in', left: '0.5in' },
+    normal: { top: '0.75in', right: '0.75in', bottom: '0.75in', left: '0.75in' },
+    wide: { top: '1in', right: '1in', bottom: '1in', left: '1in' }
+  };
+
+  const pageSize = pageSizes[config.pageSize] || pageSizes.A4;
+  const margins = marginPresets[config.margins] || pageSize.margin;
+
+  return {
+    format: pageSize.format,
+    margin: margins
+  };
+}
+
+// Load template based on configuration
+function loadConfigurableTemplate(config) {
+  const templateName = config.template === 'paperback' ? 'paperback.html' : 'ebook.html';
+  const templatePath = path.join(__dirname, `../templates/${templateName}`);
+  
+  // Fallback to base template if specific template doesn't exist
+  try {
+    return fs.readFileSync(templatePath, 'utf8');
+  } catch (error) {
+    console.log(`Template ${templateName} not found, using base template`);
+    return loadTemplate();
+  }
+}
+
+// Main PDF generation function with v1.2 enhancements
+async function generatePDF(content, title, formatConfig = {}) {
   let browser = null;
   
-  // Load and prepare HTML template
-  const template = loadTemplate();
+  // Default configuration for backward compatibility
+  const defaultConfig = {
+    fontFamily: 'Crimson Text',
+    fontSize: 12,
+    template: 'ebook',
+    pageSize: 'A4',
+    lineSpacing: 1.6,
+    margins: 'normal',
+    textAlign: 'justify',
+    headerEnabled: false,
+    footerEnabled: false,
+    headerText: '',
+    footerText: '',
+    theme: 'light',
+    colorPalette: 'classic'
+  };
+
+  const config = { ...defaultConfig, ...formatConfig };
+  
+  console.log('Using format configuration:', config);
+
+  // Load appropriate template
+  const template = loadConfigurableTemplate(config);
   const processedContent = processContent(content);
   
-  // Replace placeholders in template
-  const html = template
+  // Generate dynamic CSS
+  const cssVars = generateDynamicCSS(config);
+  
+  // Get page configuration
+  const pageConfig = getPageConfig(config);
+  
+  // Replace all placeholders in template
+  let html = template
     .replace('{{TITLE}}', title)
+    .replace('{{AUTHOR}}', 'Author Name') // Could be made configurable
     .replace('{{CONTENT}}', processedContent);
+
+  // Replace CSS variables
+  Object.keys(cssVars).forEach(key => {
+    const placeholder = `{{${key.toUpperCase()}}}`;
+    html = html.replace(new RegExp(placeholder, 'g'), cssVars[key]);
+  });
 
   // Try Puppeteer first, fallback to html-pdf if it fails
   try {
@@ -110,17 +256,14 @@ async function generatePDF(content, title) {
       timeout: 20000
     });
 
-    // Generate PDF with book-like formatting
+    // Generate PDF with configurable formatting
     const pdfBuffer = await page.pdf({
-      format: 'A4',
-      margin: {
-        top: '1in',
-        right: '0.75in',
-        bottom: '1in',
-        left: '0.75in'
-      },
+      format: pageConfig.format,
+      margin: pageConfig.margin,
       printBackground: true,
-      displayHeaderFooter: false,
+      displayHeaderFooter: config.headerEnabled || config.footerEnabled,
+      headerTemplate: config.headerEnabled ? `<div style="font-size: 10px; width: 100%; text-align: center;">${config.headerText}</div>` : '',
+      footerTemplate: config.footerEnabled ? `<div style="font-size: 10px; width: 100%; text-align: center;">${config.footerText} <span class="pageNumber"></span></div>` : '',
       timeout: 20000
     });
 

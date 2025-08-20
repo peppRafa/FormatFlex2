@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{TITLE}}</title>
+    <style>
+        {{FONT_IMPORTS}}
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: {{FONT_FAMILY}};
+            font-size: {{FONT_SIZE}}pt;
+            line-height: {{LINE_SPACING}};
+            color: {{TEXT_COLOR}};
+            background: {{BACKGROUND_COLOR}};
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+            text-align: {{TEXT_ALIGN}};
+        }
+        
+        .document {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Header */
+        {{HEADER_CSS}}
+        
+        /* Footer */
+        {{FOOTER_CSS}}
+        
+        .title-page {
+            text-align: center;
+            margin-bottom: 4rem;
+            page-break-after: always;
+            padding-top: 2in;
+        }
+        
+        .main-title {
+            font-size: {{TITLE_FONT_SIZE}}pt;
+            font-weight: 600;
+            margin: 2rem 0 1rem 0;
+            color: {{HEADING_COLOR}};
+            text-transform: none;
+            letter-spacing: 1px;
+            line-height: 1.2;
+        }
+        
+        .author {
+            font-size: {{AUTHOR_FONT_SIZE}}pt;
+            font-weight: 400;
+            margin-top: 2rem;
+            color: {{TEXT_COLOR}};
+            font-style: italic;
+        }
+        
+        .chapter-heading {
+            font-size: {{CHAPTER_FONT_SIZE}}pt;
+            font-weight: 600;
+            margin: 3rem 0 2rem 0;
+            color: {{HEADING_COLOR}};
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            page-break-before: always;
+            page-break-after: avoid;
+        }
+        
+        .section-heading {
+            font-size: {{SECTION_FONT_SIZE}}pt;
+            font-weight: 600;
+            margin: 2.5rem 0 1.5rem 0;
+            color: {{HEADING_COLOR}};
+            text-align: left;
+            page-break-after: avoid;
+        }
+        
+        .body-text {
+            font-size: {{FONT_SIZE}}pt;
+            line-height: {{LINE_SPACING}};
+            margin-bottom: 0.8rem;
+            text-align: {{TEXT_ALIGN}};
+            text-indent: {{TEXT_INDENT}};
+            color: {{TEXT_COLOR}};
+            orphans: 3;
+            widows: 3;
+        }
+        
+        .body-text:first-of-type,
+        .chapter-heading + .body-text,
+        .section-heading + .body-text {
+            text-indent: 0;
+        }
+        
+        /* Print-optimized styles for paperback */
+        @media print {
+            body {
+                font-size: {{PRINT_FONT_SIZE}}pt;
+            }
+            
+            .chapter-heading {
+                font-size: {{PRINT_CHAPTER_FONT_SIZE}}pt;
+            }
+            
+            .section-heading {
+                font-size: {{PRINT_SECTION_FONT_SIZE}}pt;
+            }
+            
+            .body-text {
+                font-size: {{PRINT_FONT_SIZE}}pt;
+            }
+        }
+        
+        /* Page break controls */
+        .page-break {
+            page-break-before: always;
+        }
+        
+        .no-break {
+            page-break-inside: avoid;
+        }
+        
+        /* Paperback-specific typography */
+        .body-text {
+            word-wrap: break-word;
+            hyphens: auto;
+            text-rendering: optimizeLegibility;
+        }
+        
+        /* Drop caps for first paragraph of chapters */
+        .chapter-heading + .body-text::first-letter {
+            font-size: 3em;
+            font-weight: bold;
+            float: left;
+            line-height: 0.8;
+            margin: 0.1em 0.1em 0 0;
+        }
+    </style>
+</head>
+<body>
+    {{HEADER_HTML}}
+    
+    <div class="document">
+        <div class="title-page">
+            <h1 class="main-title">{{TITLE}}</h1>
+            <div class="author">{{AUTHOR}}</div>
+        </div>
+        
+        <div class="content">
+            {{CONTENT}}
+        </div>
+    </div>
+    
+    {{FOOTER_HTML}}
+</body>
+</html>

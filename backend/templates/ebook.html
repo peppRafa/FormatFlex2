@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{TITLE}}</title>
+    <style>
+        {{FONT_IMPORTS}}
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: {{FONT_FAMILY}};
+            font-size: {{FONT_SIZE}}pt;
+            line-height: {{LINE_SPACING}};
+            color: {{TEXT_COLOR}};
+            background: {{BACKGROUND_COLOR}};
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+            text-align: {{TEXT_ALIGN}};
+        }
+        
+        .document {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Header */
+        {{HEADER_CSS}}
+        
+        /* Footer */
+        {{FOOTER_CSS}}
+        
+        .title-page {
+            text-align: center;
+            margin-bottom: 3rem;
+            page-break-after: always;
+        }
+        
+        .main-title {
+            font-size: {{TITLE_FONT_SIZE}}pt;
+            font-weight: 600;
+            margin: 4rem 0 2rem 0;
+            color: {{HEADING_COLOR}};
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .chapter-heading {
+            font-size: {{CHAPTER_FONT_SIZE}}pt;
+            font-weight: 600;
+            margin: 2.5rem 0 1.5rem 0;
+            color: {{HEADING_COLOR}};
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            page-break-before: always;
+            page-break-after: avoid;
+        }
+        
+        .section-heading {
+            font-size: {{SECTION_FONT_SIZE}}pt;
+            font-weight: 600;
+            margin: 2rem 0 1rem 0;
+            color: {{HEADING_COLOR}};
+            text-align: left;
+            page-break-after: avoid;
+        }
+        
+        .body-text {
+            font-size: {{FONT_SIZE}}pt;
+            line-height: {{LINE_SPACING}};
+            margin-bottom: 1rem;
+            text-align: {{TEXT_ALIGN}};
+            text-indent: {{TEXT_INDENT}};
+            color: {{TEXT_COLOR}};
+            orphans: 2;
+            widows: 2;
+        }
+        
+        .body-text:first-of-type,
+        .chapter-heading + .body-text,
+        .section-heading + .body-text {
+            text-indent: 0;
+        }
+        
+        /* Print-specific styles */
+        @media print {
+            body {
+                font-size: {{PRINT_FONT_SIZE}}pt;
+            }
+            
+            .chapter-heading {
+                font-size: {{PRINT_CHAPTER_FONT_SIZE}}pt;
+            }
+            
+            .section-heading {
+                font-size: {{PRINT_SECTION_FONT_SIZE}}pt;
+            }
+        }
+        
+        /* Page break controls */
+        .page-break {
+            page-break-before: always;
+        }
+        
+        .no-break {
+            page-break-inside: avoid;
+        }
+        
+        /* Handle long words and hyphenation */
+        .body-text {
+            word-wrap: break-word;
+            hyphens: auto;
+        }
+    </style>
+</head>
+<body>
+    {{HEADER_HTML}}
+    
+    <div class="document">
+        <div class="title-page">
+            <h1 class="main-title">{{TITLE}}</h1>
+        </div>
+        
+        <div class="content">
+            {{CONTENT}}
+        </div>
+    </div>
+    
+    {{FOOTER_HTML}}
+</body>
+</html>
